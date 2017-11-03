@@ -37,6 +37,26 @@ let db,
     savePetId,
     saveId;
 
+function initDb(done) {
+  orm.loadCollection(Users_1);
+  orm.loadCollection(Pets_1);
+  orm.loadCollection(Profiles_1);
+  orm.loadCollection(Users_Profiles_Graph);
+  orm.loadCollection(Users_Users_Graph);
+  orm.initialize(waterline_config, (err, o) => {
+    if (err) {
+      return done(err);
+    }
+    models = o.collections;
+    connections = o.connections;
+
+    connections.arangodb._adapter.getDB('arangodb', '', (n_db) => {
+      db = n_db;
+      done();
+    });
+  });
+}
+
 describe('adapter', function () {
 
   before(function (done) {
@@ -49,25 +69,12 @@ describe('adapter', function () {
 
     sys_db.dropDatabase(config.database)
     .then(() => {
-      orm.loadCollection(Users_1);
-      orm.loadCollection(Pets_1);
-      orm.loadCollection(Profiles_1);
-      orm.loadCollection(Users_Profiles_Graph);
-      orm.loadCollection(Users_Users_Graph);
-      orm.initialize(waterline_config, (err, o) => {
-        if (err) {
-          return done(err);
-        }
-        models = o.collections;
-        connections = o.connections;
-
-        connections.arangodb._adapter.getDB('arangodb', '', (n_db) => {
-          db = n_db;
-          done();
-        });
-      });
+      initDb(done);
     })
     .catch((err) => {
+      if (err.code === 404) {
+        return initDb(done);
+      }
       done(err);
     });
   });
@@ -83,6 +90,33 @@ describe('adapter', function () {
   });
 
   describe('methods', function () {
+
+    describe('quote', () => {
+      it('should quote a string', () => {
+        should.exist(models.pets_1.quote);
+        models.pets_1.quote.should.be.a.Function();
+        var quoted = models.pets_1.quote('ABC');
+        should.exist(quoted);
+        quoted.should.eql('"ABC"');
+      });
+
+      it('should not quote a number but return it as a string', () => {
+        should.exist(models.pets_1.quote);
+        models.pets_1.quote.should.be.a.Function();
+        var quoted = models.pets_1.quote(100);
+        should.exist(quoted);
+        quoted.should.eql('100');
+      });
+
+      it('should quote an object', () => {
+        should.exist(models.pets_1.quote);
+        models.pets_1.quote.should.be.a.Function();
+        var quoted = models.pets_1.quote({aaa:100, bbb:'one'});
+        should.exist(quoted);
+        quoted.should.eql('{"aaa": 100, "bbb": "one"}');
+      });
+    });
+
     it('should create a new document in pets', (done) => {
       models.pets_1.create({name: 'Woof'})
       .then((pet) => {
@@ -124,7 +158,16 @@ describe('adapter', function () {
     });
 
     it('should create a new document in users', (done) => {
-      models.users_1.create({name: 'Fred Blogs', pet: savePetId, second: 'match'})
+      models.users_1.create({
+        name: 'Fred Blogs',
+        first_name: 'Fred',
+        pet: savePetId,
+        second: 'match',
+        anArray: [
+          {element_name: 'one', element_value: 1},
+          {element_name: 'two', element_value: 2}
+        ]
+      })
       .then((user) => {
         should.exist(user);
         user.should.have.property('id');
@@ -133,7 +176,9 @@ describe('adapter', function () {
         user.should.have.property('name');
         user.should.have.property('createdAt');
         user.should.have.property('updatedAt');
+        user.should.have.property('anArray');
         user.name.should.equal('Fred Blogs');
+        user.anArray.length.should.eql(2);
         saveId = user.id;
         done();
       })
@@ -533,6 +578,7 @@ describe('adapter', function () {
           models.users_1.create({name: 'Delete Me', pet: savePetId, second: 'match'})
           .then((user) => {
             done();
+            return null;  // avoid bluebird promise warning
           })
           .catch((err) => {
             done(err);
@@ -686,6 +732,10 @@ describe('adapter', function () {
         .then((user) => {
           id = user.id;
           done();
+          return null;  // avoid bluebird promise warning
+        })
+        .catch((err) => {
+          done(err);
         });
       });
 
@@ -736,6 +786,61 @@ describe('adapter', function () {
       });
     });
 
+    describe('query', function () {
+      let id;
+      beforeEach(function (done) {
+        var user = {
+          name: 'query test',
+          first_name: 'query',
+          type: 'query test'
+        };
+        models.users_1.create(user)
+        .then((user) => {
+          id = user.id;
+          done();
+        });
+      });
+
+      afterEach(function (done) {
+        models.users_1.destroy(id)
+        .then(() => {
+          done();
+        });
+      });
+
+      it('should return const string', function (done) {
+        models.users_1.query('RETURN "FOO"')
+        .then((res) => {
+          should.exist(res);
+          res.should.be.an.Array();
+          res.length.should.eql(1);
+          res[0].should.eql('FOO');
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+      });
+
+      it('should return the query test user', function (done) {
+        models.users_1.query(`
+FOR u in users_1
+  FILTER u._id=="${id}"
+  RETURN u
+`)
+        .then((res) => {
+          should.exist(res);
+          res.should.be.an.Array();
+          res.length.should.eql(1);
+          res[0].name.should.eql('query test');
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+      });
+    });
+
   }); // methods
 
 
@@ -759,6 +864,45 @@ describe('adapter', function () {
       })
       .catch((err) => {
         done(err);
+      });
+    });
+
+    describe('createGraph', () => {
+      it('should be present as a method', () => {
+        should.exist(models.users_1.createGraph);
+      });
+
+      it('should create named graph testGraph', (done) => {
+        models.users_1.createGraph('testGraph')
+        .then((res) => {
+          should.exist(res);
+          should.exist(res.name);
+          res.name.should.eql('testGraph');
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
+      });
+    });
+
+    describe('deleteGraph', () => {
+      it('should be present as a method', () => {
+        should.exist(models.users_1.deleteGraph);
+      });
+
+      it('should delete named graph testGraph', (done) => {
+        models.users_1.deleteGraph('testGraph')
+        .then((res) => {
+          should.exist(res);
+          should.exist(res.removed);
+          res.removed.should.eql(true);
+          res.error.should.eql(false);
+          done();
+        })
+        .catch((err) => {
+          done(err);
+        });
       });
     });
 
