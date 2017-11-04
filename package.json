@@ -1,5 +1,5 @@
 {
-  "name": "sails-arangodb",
+  "name": "@voroneril/sails-arangodb",
   "version": "0.5.1",
   "description": "Arangodb adapter for Sails / Waterline",
   "main": "./lib/adapter.js",
