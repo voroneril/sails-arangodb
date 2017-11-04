@@ -1,5 +1,5 @@
 {
-  "name": "@partoutx/sails-arangodb",
+  "name": "sails-arangodb",
   "version": "0.5.1",
   "description": "Arangodb adapter for Sails / Waterline",
   "main": "./lib/adapter.js",
@@ -9,7 +9,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/partoutx/sails-arangodb.git"
+    "url": "https://github.com/voroneril/sails-arangodb.git"
   },
   "keywords": [
     "arangodb",
@@ -22,7 +22,8 @@
   "author": "Gabriel Letarte <gabriel.letarte@gmail.com>",
   "contributors": [
     "Gabriel Letarte <gabriel.letarte@gmail.com>",
-    "Graham Bevan <graham.bevan@ntlworld.com>"
+    "Graham Bevan <graham.bevan@ntlworld.com>",
+    "Oleksii Kriukov <voron.eril@gmail.com>",
   ],
   "license": "MIT",
   "readmeFilename": "README.md",
