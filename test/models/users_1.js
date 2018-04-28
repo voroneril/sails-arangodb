@@ -21,6 +21,15 @@ const Users = Waterline.Collection.extend({
       required: true
     },
 
+    startest: {
+      type: 'string',
+      defaultsTo: '***'
+    },
+
+    message: {
+      type: 'string'
+    },
+
     complex: { type: 'object' },
 
     pet: {
