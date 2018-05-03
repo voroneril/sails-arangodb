@@ -1,7 +1,14 @@
 ![image_squidhome@2x.png](http://i.imgur.com/RIvu9.png)
 
 # sails-arangodb
-**This is a fork of gabriel-letarte/sails-arangodb project**
+**This is a fork of partoutx/sails-arangodb project**
+
+### Important notes!
+
+**1)** Do not use "__" in table names. The adapter uses tableName.indexOf('__') to detect automatically generated Sails tables
+**2)** Do not use Migration: Alter. This type of migration does not work
+
+### Description
 
 Provides easy access to `ArangoDB` from Sails.js & Waterline.
 
@@ -133,95 +140,6 @@ folder created containing a html lcov report that you can point your browser to.
 $ gulp docs
 ```
 (these are also generated in the default 'watch' mode above)
-
----
-
-# Older doc
-
-### Example model definitions
-
-```javascript
-/**
- * User Model
- *
- * The User model represents the schema of authentication data
- */
-module.exports = {
-
-    // Enforce model schema in the case of schemaless databases
-    schema: true,
-    tableName: 'User',
-    attributes: {
-        id: {
-            type: 'string',
-            primaryKey: true,
-            columnName: '_key'
-        },
-        username: {
-            type: 'string',
-            unique: true
-        },
-        email: {
-            type: 'email',
-            unique: true
-        },
-        profile: {
-            collection: 'Profile',
-            via: 'user',
-            edge: 'userCommented'
-        }
-    }
-};
-```
-```javascript
-
-// api/models/Profile.js
-module.exports = {
-    tableName: 'profile',
-    attributes: {
-        id: {
-            type: 'string',
-            primaryKey: true,
-            columnName: '_key'
-        },
-        user: {
-            model: "User",
-            required: true
-        },
-        familyName: {
-            type: 'string'
-        },
-        givenName: {
-            type: 'string'
-        },
-        profilePic: {
-            type: 'string'
-        }
-    }
-    }
-
-// api/models/User.js
-module.exports = {
-    tableName: 'user',
-    attributes: {
-        id: {
-            type: 'string',
-            primaryKey: true,
-            columnName: '_key'
-        },
-        username: {
-            type: 'string'
-        },
-        profile: {
-            collection: 'profile',
-            via: 'user',
-            edge: 'profileOf'
-        }
-    }
-};
-;
-```
-
 
 ### License
 
