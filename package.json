@@ -1,32 +1,45 @@
 {
-  "name": "@voroneril/sails-arangodb",
-  "version": "0.5.1",
-  "description": "Arangodb adapter for Sails / Waterline",
-  "main": "./lib/adapter.js",
-  "scripts": {
-    "test": "gulp waterline; gulp test",
-    "lint": "jshint lib/*.js"
-  },
-  "repository": {
+  "_from": "github:voroneril/sails-arangodb#quickfix",
+  "_id": "@voroneril/sails-arangodb@0.5.1",
+  "_inBundle": false,
+  "_location": "/@voroneril/sails-arangodb",
+  "_phantomChildren": {},
+  "_requested": {
     "type": "git",
-    "url": "https://github.com/voroneril/sails-arangodb.git"
+    "raw": "github:voroneril/sails-arangodb#quickfix",
+    "rawSpec": "github:voroneril/sails-arangodb#quickfix",
+    "saveSpec": "github:voroneril/sails-arangodb#quickfix",
+    "fetchSpec": null,
+    "gitCommittish": "quickfix"
   },
-  "keywords": [
-    "arangodb",
-    "adapter",
-    "sails",
-    "waterline",
-    "sails.js",
-    "plugin"
+  "_requiredBy": [
+    "/"
   ],
-  "author": "Gabriel Letarte <gabriel.letarte@gmail.com>",
+  "_resolved": "github:voroneril/sails-arangodb#2c07bcae83486c23b4e6fa6c141fcfdebf83765b",
+  "_spec": "github:voroneril/sails-arangodb#quickfix",
+  "_where": "/home/voron/beasteon/git/beasteon-sails",
+  "author": {
+    "name": "Gabriel Letarte",
+    "email": "gabriel.letarte@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/voroneril/sails-arangodb/issues"
+  },
+  "bundleDependencies": false,
   "contributors": [
-    "Gabriel Letarte <gabriel.letarte@gmail.com>",
-    "Graham Bevan <graham.bevan@ntlworld.com>",
-    "Oleksii Kriukov <voron.eril@gmail.com>"
+    {
+      "name": "Gabriel Letarte",
+      "email": "gabriel.letarte@gmail.com"
+    },
+    {
+      "name": "Graham Bevan",
+      "email": "graham.bevan@ntlworld.com"
+    },
+    {
+      "name": "Oleksii Kriukov",
+      "email": "voron.eril@gmail.com"
+    }
   ],
-  "license": "MIT",
-  "readmeFilename": "README.md",
   "dependencies": {
     "aqb": ">=1.8.3",
     "arangojs": "5.x.x",
@@ -35,6 +48,8 @@
     "lodash": ">=3.10.1",
     "q": "^1.0.1"
   },
+  "deprecated": false,
+  "description": "Arangodb adapter for Sails / Waterline",
   "devDependencies": {
     "captains-log": "~0.11.0",
     "del": "^2.2.2",
@@ -51,14 +66,7 @@
     "waterline": "^0.11.11",
     "waterline-adapter-tests": "~0.11.1"
   },
-  "waterlineAdapter": {
-    "type": "arangodb",
-    "interfaces": [
-      "semantic",
-      "queryable"
-    ],
-    "waterlineVersion": "~0.11.0"
-  },
+  "homepage": "https://github.com/voroneril/sails-arangodb#readme",
   "jshintConfig": {
     "bitwise": true,
     "curly": false,
@@ -69,5 +77,33 @@
     "unused": "vars",
     "node": true,
     "sub": true
+  },
+  "keywords": [
+    "arangodb",
+    "adapter",
+    "sails",
+    "waterline",
+    "sails.js",
+    "plugin"
+  ],
+  "license": "MIT",
+  "main": "./lib/adapter.js",
+  "name": "@voroneril/sails-arangodb",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voroneril/sails-arangodb.git"
+  },
+  "scripts": {
+    "lint": "jshint lib/*.js",
+    "test": "gulp waterline; gulp test"
+  },
+  "version": "0.5.1",
+  "waterlineAdapter": {
+    "type": "arangodb",
+    "interfaces": [
+      "semantic",
+      "queryable"
+    ],
+    "waterlineVersion": "~0.11.0"
   }
 }
