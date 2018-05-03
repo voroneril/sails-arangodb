@@ -5,7 +5,8 @@
 
 ### Important notes!
 
-**1)** Do not use "__" in table names. The adapter uses tableName.indexOf('__') to detect automatically generated Sails tables
+**1)** Do not use "\_\_" in table names. The adapter uses tableName.indexOf('\_\_') to detect automatically generated Sails tables
+
 **2)** Do not use Migration: Alter. This type of migration does not work
 
 ### Description
